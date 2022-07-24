@@ -18,7 +18,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
 }
 
-group = "org.kantor"
+group = "org.pixial"
 version = "0.0.1"
 
 application {
@@ -49,6 +49,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus:$prometheusVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-html-builder:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
     implementation("org.litote.kmongo:kmongo-coroutine-serialization:$kmongoVersion")

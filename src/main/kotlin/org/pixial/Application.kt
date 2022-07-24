@@ -50,7 +50,7 @@ fun Application.installPlugins() {
         format {
             val request = it.request
             val response = it.response
-            "${request.httpMethod.value}: http:localhost:${port}${request.uri} : ${response.status()}"
+            "${request.httpMethod.value}: http://localhost:${port}${request.uri} : ${response.status()}"
         }
     }
     install(CallId) {
