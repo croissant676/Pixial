@@ -13,10 +13,7 @@ import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
-import org.pixial.utils.base64Encoder
-import org.pixial.utils.checkHoconDeletionStatus
-import org.pixial.utils.installStatusPages
-import org.pixial.utils.random
+import org.pixial.utils.*
 import org.slf4j.event.Level
 
 lateinit var application: Application
@@ -24,20 +21,23 @@ lateinit var application: Application
 
 val developmentLogger = KotlinLogging.logger { }
 
-fun main(args: Array<String>) = EngineMain.main(args)
+fun main(args: Array<String> = emptyArray()) = EngineMain.main(args)
 
 fun Application.module() {
     application = this
     installPlugins()
     installStatusPages()
     checkHoconDeletionStatus()
+    createMailer()
 }
 
 fun Application.installPlugins() {
     install(IgnoreTrailingSlash)
     install(AutoHeadResponse)
     install(DoubleReceive)
-    install(Compression)
+    install(Compression) {
+        gzip()
+    }
     install(ContentNegotiation) {
         json(Json {
             prettyPrint = true

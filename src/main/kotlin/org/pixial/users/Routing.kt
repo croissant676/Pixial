@@ -4,9 +4,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.Identity.encode
-import org.pixial.utils.checkBR
-import org.pixial.utils.encode
 import org.pixial.utils.findOneByIdOrThrow
 import org.pixial.utils.id
 
@@ -22,14 +19,20 @@ fun Route.addUserRouting() {
                 val id = call.id()
                 val user = userCollection.findOneByIdOrThrow(id)
                 val newUser: User = call.receive()
-                checkBR(newUser.id == id)
-                if (newUser.password != user.password) newUser.password = newUser.password.encode()
-                userCollection.updateOneById(id, newUser)
-                call.respond(newUser)
+                val result = evaluate(user, newUser)
+                userCollection.updateOneById(id, result)
+                call.respond(result)
             }
             delete {
-
+                val id = call.id()
+//                val user = call.user()
+//                if (id != user.id) throw AuthException("Only the user can delete their account.")
+                userCollection.deleteOneById(id)
             }
+        }
+        get {
+            val list = userCollection.find().toList()
+            call.respond(list)
         }
     }
 }

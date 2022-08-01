@@ -22,45 +22,45 @@ val random = SecureRandom().asKotlinRandom()
 
 @Serializable(with = Base64IdSerializer::class)
 class Base64Id internal constructor(internal val data: ByteArray) {
-	override fun equals(other: Any?): Boolean = other is Base64Id && data.contentEquals(other.data)
-	override fun hashCode(): Int = data.contentHashCode()
-	override fun toString(): String = base64Encoder.encodeToString(data)
+    override fun equals(other: Any?): Boolean = other is Base64Id && data.contentEquals(other.data)
+    override fun hashCode(): Int = data.contentHashCode()
+    override fun toString(): String = base64Encoder.encodeToString(data)
 }
 
 fun idFromString(source: String) =
-	idFromStringOrNull(source) ?: throw IllegalArgumentException("Base64 identifier string $source is not a valid id.")
+    idFromStringOrNull(source) ?: throw IllegalArgumentException("Base64 identifier string $source is not a valid id.")
 
 fun idFromStringBR(source: String) =
-	idFromStringOrNull(source) ?: throw BadRequestException("Base64 identifier string $source is not a valid id.")
+    idFromStringOrNull(source) ?: throw BadRequestException("Base64 identifier string $source is not a valid id.")
 
 fun idFromStringOrNull(source: String): Base64Id? = if (source.length != 20) null else runCatching {
-	Base64Id(base64Decoder.decode(source))
+    Base64Id(base64Decoder.decode(source))
 }.getOrNull()
 
 fun randomId(): Base64Id = Base64Id(random.nextBytes(15))
 
 object Base64IdSerializer : KSerializer<Base64Id> {
-	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Base64Id", PrimitiveKind.STRING)
-	override fun serialize(encoder: Encoder, value: Base64Id) =
-		if (encoder is BsonEncoder) encoder.encodeByteArray(value.data) else encoder.encodeString(value.toString())
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Base64Id", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: Base64Id) =
+        if (encoder is BsonEncoder) encoder.encodeByteArray(value.data) else encoder.encodeString(value.toString())
 
-	override fun deserialize(decoder: Decoder): Base64Id =
-		if (decoder is FlexibleDecoder && decoder.reader.currentBsonType == BsonType.BINARY) Base64Id(decoder.reader.readBinaryData().data)
-		else idFromString(decoder.decodeString())
+    override fun deserialize(decoder: Decoder): Base64Id =
+        if (decoder is FlexibleDecoder && decoder.reader.currentBsonType == BsonType.BINARY) Base64Id(decoder.reader.readBinaryData().data)
+        else idFromString(decoder.decodeString())
 }
 
 fun ApplicationCall.id(parameterName: String = "id"): Base64Id =
-	idFromStringBR(parameters[parameterName] ?: throw MissingRequestParameterException(parameterName))
+    idFromStringBR(parameters[parameterName] ?: throw MissingRequestParameterException(parameterName))
 
 fun ApplicationCall.idOrNull(parameterName: String = "id"): Base64Id? {
-	val parameter = parameters[parameterName] ?: return null
-	return idFromStringOrNull(parameter)
+    val parameter = parameters[parameterName] ?: return null
+    return idFromStringOrNull(parameter)
 }
 
 fun ApplicationCall.idQuery(parameterName: String = "id"): Base64Id =
-	idFromStringBR(request.queryParameters[parameterName] ?: throw MissingRequestParameterException(parameterName))
+    idFromStringBR(request.queryParameters[parameterName] ?: throw MissingRequestParameterException(parameterName))
 
 fun ApplicationCall.idQueryOrNull(parameterName: String = "id"): Base64Id? {
-	val parameter = request.queryParameters[parameterName] ?: return null
-	return idFromStringOrNull(parameter)
+    val parameter = request.queryParameters[parameterName] ?: return null
+    return idFromStringOrNull(parameter)
 }

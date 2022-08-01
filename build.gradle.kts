@@ -1,5 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
@@ -11,6 +13,8 @@ val springVersion: String by project
 val bouncycastleVersion: String by project
 val kotlinLoggingVersion: String by project
 val slf4jVersion: String by project
+val testVersion: String by project
+val testKtorVersion: String by project
 
 plugins {
     application
@@ -56,9 +60,22 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$datetimeVersion")
     implementation("net.axay:simplekotlinmail-core:$mailVersion")
     implementation("net.axay:simplekotlinmail-client:$mailVersion")
+    implementation("net.axay:simplekotlinmail-html:$mailVersion")
     implementation("org.springframework.security:spring-security-crypto:$springVersion")
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncycastleVersion")
     implementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+    testImplementation("io.kotest:kotest-runner-junit5:$testVersion")
+    testImplementation("io.kotest.extensions:kotest-assertions-ktor:$testKtorVersion")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
