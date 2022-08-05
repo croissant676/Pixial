@@ -28,10 +28,11 @@ data class UserSignup(
 
 suspend fun signup(userSignup: UserSignup): User {
     validate(userSignup)
+    val password =  userSignup.password.encode()
     val user = User(
         id = randomId(),
         username = userSignup.username,
-        password = userSignup.password.encode(),
+        password = password,
         email = userSignup.email,
         birthday = userSignup.birthday
     )

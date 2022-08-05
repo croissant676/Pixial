@@ -21,9 +21,9 @@ data class User(
     var birthday: LocalDate,
     var profilePicture: Base64Id = randomId(),
     var emailVerified: Boolean = false,
-    val createdSets: MutableSet<Base64Id> = mutableSetOf(),
-    val favoriteSets: MutableSet<Base64Id> = mutableSetOf(),
-) : Principal
+    val createdSets: MutableList<Base64Id> = mutableListOf(),
+    val favoriteSets: MutableList<Base64Id> = mutableListOf(),
+): Principal
 
 val userCollection = database.getCollection<User>()
 
